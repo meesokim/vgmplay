@@ -37,8 +37,10 @@ typedef e_uint8 uint8_t;
 typedef e_int8 int8_t;
 typedef e_uint16 uint16_t;
 typedef e_int16 int16_t;
-typedef e_uint32 uint32_t;
-typedef e_int32 int32_t;
+#if !defined(uint32_t)
+//typedef e_uint32 uint32_t;
+#endif
+//typedef e_int32 int32_t;
 #ifdef _MSC_VER
 typedef unsigned __int64					uint64_t;
 typedef signed __int64						int64_t;

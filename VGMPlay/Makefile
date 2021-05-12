@@ -22,6 +22,10 @@ endif
 ifeq ($(WINDOWS), 1)
 # no libAO for Windows
 USE_LIBAO = 0
+CC = x86_64-w64-mingw32-gcc
+CFLAGS := -I/usr/x86_64-w64-mingw32/include -Izlib
+else
+CC = gcc
 endif
 ifeq ($(MACOSX), 1)
 # Mac OSX requires libAO
@@ -68,7 +72,7 @@ ifeq ($(MACOSX), 1)
 USE_DBUS = 0
 endif
 
-CC = gcc
+
 ifndef PREFIX
 PREFIX = /usr/local
 #PREFIX = $(HOME)/.local
@@ -111,9 +115,9 @@ endif
 
 ifeq ($(DEBUG), 0)
 # -- General Compile Flags --
-CFLAGS := -O3 -g0 -Wno-unused-variable -Wno-unused-value -Wno-unused-but-set-variable $(CFLAGS)
+CFLAGS := -O3 -g0 -Wno-unused-variable -Wno-unused-value -Wno-unused-but-set-variable $(CFLAGS) 
 else
-CFLAGS := -g -Wall $(CFLAGS)
+CFLAGS := -g -Wall $(CFLAGS) 
 endif
 # libm (math library) and libz (zlib)
 LDFLAGS := -lm -lz $(LDFLAGS)
@@ -128,7 +132,11 @@ ifeq ($(MACOSX), 1)
 #CFLAGS += -I/some/path
 else
 # for Linux, add librt (clock stuff) and libpthread (threads)
+ifneq ($(RASPPI), 0)
+LDFLAGS += -lrt -lpthread 
+else
 LDFLAGS += -lrt -lpthread -pthread
+endif
 
 #DBus
 ifeq ($(USE_DBUS), 1)
@@ -294,7 +302,7 @@ $(EMUOBJ)/%.o:	$(EMUSRC)/%.c
 $(OBJ)/%.o:	$(SRC)/%.c
 	@echo Compiling $< ...
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) $(MAINFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(MAINFLAGS) -c $< -o $@
 
 clean:
 	@rm -f xdg/vgmplay.desktop
